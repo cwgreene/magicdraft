@@ -6,9 +6,11 @@ from flask import Blueprint, request
 
 from .shared.draft import Draft, DraftResponse
 
+from typing import Mapping
+
 API = Blueprint('api', __name__)
 
-draft_db = {}
+draft_db : Mapping[uuid.UUID, Draft] = {}
 
 UNAUTHORIZED = ("Unauthorized", 401)
 
@@ -20,20 +22,14 @@ def post_draft():
     draft_db[draft_id] = draft
     name = request.json["name"]
     draft.players.append(name)
-    return  {
-                "version": "1",
-                "draft": draft.to_dict()
-            }
+    return  DraftResponse(draft).to_dict()
 
 @API.route("/api/draft/<id>", methods=["GET"])
 def get_draft(id):
     id = uuid.UUID(id)
     if id not in draft_db:
         return UNAUTHORIZED
-    return  {
-                "version" : "1",
-                "draft": draft_db[id].to_dict()
-            }
+    return  DraftResponse(draft_db[id]).to_dict()
 
 @API.route("/api/draft/<id>/join", methods=["POST"])
 def join_draft(id):

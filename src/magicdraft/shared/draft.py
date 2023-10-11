@@ -50,7 +50,7 @@ class DraftRequest():
         return self.__dict__
 
 class DraftResponse:
-    def __init__(self, draft=None, version="1"):
+    def __init__(self, draft : Draft = None, version : str="1"):
         self.version = version
         self.draft = draft
 

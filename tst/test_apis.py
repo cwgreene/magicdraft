@@ -7,12 +7,9 @@ def test_draft_creation():
     res = client.post("/api/draft", json= {
         "name": "myName",
     })
-    res_json = res.json
-    assert "version" in res_json
-    assert "draft" in res_json
-    draft = Draft.from_dict(res_json["draft"])
+    draft = DraftResponse.from_dict(res.json).draft
 
-    res2 = client.get(f"/api/draft/{res_json['draft']['uuid']}")
+    res2 = client.get(f"/api/draft/{draft.uuid}")
     draft2 = Draft.from_dict(res2.json["draft"])
     assert draft.uuid == draft2.uuid
     assert "myName" in draft2.players

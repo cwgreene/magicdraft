@@ -6,6 +6,8 @@ from flask import Blueprint, request
 
 from .shared.draft import Draft, DraftResponse
 
+from .draftlogic import generatePacks
+
 from typing import Mapping
 
 API = Blueprint('api', __name__)
@@ -43,3 +45,16 @@ def join_draft(id : str) -> DraftResponse:
     draft.players.append(newPlayer)
 
     return DraftResponse(draft).to_dict()
+
+@API.route("/api/draft/<id>/begin", methods=["POST"])
+def begin_draft(id : str) -> DraftResponse:
+    id = uuid.UUID(id)
+    if id not in draft_db:
+        return UNAUTHORIZED
+    draft = draft_db[id]
+
+    draft.started = True
+    draft.originalPacks = generatePacks(draft.rnd)
+
+    return DraftResponse(draft).to_dict()
+

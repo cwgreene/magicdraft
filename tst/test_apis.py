@@ -24,3 +24,21 @@ def test_join_draft():
     res = DraftResponse.from_dict(client.post(f"/api/draft/{id}/join", json={"name": "joe"}).json)
     draft = res.draft
     assert set(["bob","joe"]) == set(draft.players)
+
+def test_begin_draft():
+    app = create_app({"TESTING": True})
+    client = app.test_client()
+    # init draft
+    res = client.post("/api/draft", json={"name": "bob"})
+    res = DraftResponse.from_dict(res.json)
+    draft = res.draft
+    id = draft.uuid
+    
+    # Add Player
+    res = DraftResponse.from_dict(client.post(f"/api/draft/{id}/join", json={"name": "joe"}).json)
+    draft = res.draft
+
+    # Begin
+    res = DraftResponse.from_dict(client.post(f"/api/draft/{id}/begin").json)
+    res.draft.started == True
+    assert len(res.draft.originalPacks) > 0

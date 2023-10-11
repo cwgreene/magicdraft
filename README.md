@@ -1,6 +1,6 @@
 # Magic Draft Page
 
-# Data Types
+# Data Types / Messages
 ```java
 struct DraftState {
     uuid id; // Draft Id
@@ -15,7 +15,7 @@ struct DraftState {
 };
 ```
 
-```
+```java
 struct Player{
     uuid playerId;
     String Name;

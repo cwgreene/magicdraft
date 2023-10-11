@@ -15,7 +15,7 @@ draft_db : Mapping[uuid.UUID, Draft] = {}
 UNAUTHORIZED = ("Unauthorized", 401)
 
 @API.route("/api/draft", methods=["POST"])
-def post_draft():
+def post_draft() -> DraftResponse:
     draft_id = uuid.uuid4()
     seed = os.urandom(8)
     draft = Draft(draft_id, seed)
@@ -25,14 +25,14 @@ def post_draft():
     return  DraftResponse(draft).to_dict()
 
 @API.route("/api/draft/<id>", methods=["GET"])
-def get_draft(id):
+def get_draft(id : str) -> DraftResponse:
     id = uuid.UUID(id)
     if id not in draft_db:
         return UNAUTHORIZED
-    return  DraftResponse(draft_db[id]).to_dict()
+    return DraftResponse(draft_db[id]).to_dict()
 
 @API.route("/api/draft/<id>/join", methods=["POST"])
-def join_draft(id):
+def join_draft(id : str) -> DraftResponse:
     id = uuid.UUID(id)
     if id not in draft_db:
         return UNAUTHORIZED
